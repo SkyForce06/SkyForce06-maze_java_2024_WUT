@@ -1,14 +1,9 @@
-import javax.swing.*;
-
 import mazeLogic.IMazeService;
 import mazeLogic.MazeConstants;
 import mazeLogic.MazeParser;
-
+import javax.swing.*;
 import java.awt.*;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,11 +11,14 @@ public class MazeFrame extends JPanel {
     private MazeParser parser;
     private int cellSize;
     private IMazeService mazeService;
+    private int offsetX = 0;
+    private int offsetY = 0;
+    private Image cachedImage;
 
     public MazeFrame(IMazeService mazeService) {
         this.mazeService = mazeService;
         setBackground(Color.WHITE);
-        cellSize = 7; // Określ rozmiar komórki
+        cellSize = 6; // Określ rozmiar komórki
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         // addMouseListener(new MouseAdapter() {
 
@@ -44,7 +42,8 @@ public class MazeFrame extends JPanel {
     public void loadMazeFromFile(File file) {
         try {
             parser = new MazeParser(file.getAbsolutePath());
-            setPreferredSize(new Dimension(parser.getRows() * cellSize, parser.getCols() * cellSize));
+            cachedImage = createCachedImage();
+            setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
             revalidate(); // Konieczne odświeżenie rozmiaru
             repaint();
         } catch (IOException e) {
@@ -53,22 +52,24 @@ public class MazeFrame extends JPanel {
     }
 
     public void solveMaze() {
-        var solvePoints = mazeService.getSolvePoints(parser);
-        var maze = parser.getMaze();
-        for (Point solvePoint : solvePoints) {
-            maze[(int) solvePoint.getX()][(int) solvePoint.getY()] = MazeConstants.Solution;
+        if (parser != null) {
+            var solvePoints = mazeService.getSolvePoints(parser);
+            var maze = parser.getMaze();
+            for (Point solvePoint : solvePoints) {
+                maze[(int) solvePoint.getX()][(int) solvePoint.getY()] = MazeConstants.Solution;
+            }
+            cachedImage = createCachedImage();
+            repaint();
         }
-        repaint();
     }
 
     private void handleCellClick(int row, int col, char cell) {
         // Example action: display a message with the cell's coordinates and value
         JOptionPane.showMessageDialog(this, "Clicked cell at (" + row + ", " + col + ") with value: " + cell);
     }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    private Image createCachedImage() {
+        Image image = new BufferedImage(parser.getCols() * cellSize, parser.getRows() * cellSize, BufferedImage.TYPE_INT_RGB);
+        Graphics g = image.getGraphics();
         if (parser != null) {
             int rows = parser.getRows();
             int cols = parser.getCols();
@@ -76,19 +77,19 @@ public class MazeFrame extends JPanel {
                 for (int j = 0; j < cols; j++) {
                     switch (parser.getMaze()[i][j]) {
                         case MazeConstants.Start:
-                            g.setColor(Color.GREEN); // Start position
+                            g.setColor(Color.GREEN); // Początkowa pozycja
                             break;
                         case MazeConstants.End:
-                            g.setColor(Color.RED); // End position
+                            g.setColor(Color.RED); // Końcowa pozycja
                             break;
                         case MazeConstants.Wall:
-                            g.setColor(Color.BLACK); // Wall
+                            g.setColor(Color.BLACK); // Ściana
                             break;
                         case MazeConstants.Solution:
-                            g.setColor(Color.CYAN); // Wall
+                            g.setColor(Color.CYAN); // Ścieżka
                             break;
                         default:
-                            g.setColor(Color.WHITE); // Path
+                            g.setColor(Color.WHITE); // Ścieżka
                             break;
                     }
                     g.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
@@ -97,6 +98,23 @@ public class MazeFrame extends JPanel {
                 }
             }
         }
+        g.dispose();
+        return image;
+    }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (cachedImage != null) {
+            g.drawImage(cachedImage, -offsetX, -offsetY, null);
+        }
+    }
+
+    @Override
+    public void scrollRectToVisible(Rectangle aRect) {
+        super.scrollRectToVisible(aRect);
+        offsetX = aRect.x;
+        offsetY = aRect.y;
+        repaint();
     }
 }
