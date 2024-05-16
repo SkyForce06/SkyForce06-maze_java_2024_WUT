@@ -1,11 +1,7 @@
 import javax.swing.*;
-
 import mazeLogic.MazeService;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
 public class MainFrame extends JFrame {
 
@@ -51,36 +47,10 @@ public class MainFrame extends JFrame {
         add(mainPanel);
 
         // Dodaj funkcje do przycisków używając klasy FunctionButton
-        FunctionButton.loadTextButton(loadTextButton, mazeFrame, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int returnValue = fileChooser.showOpenDialog(null);
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
+        loadTextButton.addActionListener(new LoadButtonTXT(mazeFrame));
+        saveButton.addActionListener(new SaveButton(mazeFrame));
 
-                    mazeFrame.loadMazeFromFile(selectedFile);
-                }
-            }
-        });
-        FunctionButton.loadTextButton(findPathButton, mazeFrame, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mazeFrame.solveMaze();
-            }
-        });
-
-        FunctionButton.saveButton(saveButton, mazeFrame, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int returnValue = fileChooser.showSaveDialog(null);
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
-                    mazeFrame.saveSolveStepsToFile(selectedFile);
-                }
-            }
-        });
+        findPathButton.addActionListener(e -> mazeFrame.solveMaze());
     }
 
     public static void main(String[] args) {
