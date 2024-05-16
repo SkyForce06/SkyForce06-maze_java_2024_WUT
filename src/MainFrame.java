@@ -69,6 +69,18 @@ public class MainFrame extends JFrame {
                 mazeFrame.solveMaze();
             }
         });
+
+        FunctionButton.saveButton(saveButton, mazeFrame, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int returnValue = fileChooser.showSaveDialog(null);
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    mazeFrame.saveSolveStepsToFile(selectedFile);
+                }
+            }
+        });
     }
 
     public static void main(String[] args) {
