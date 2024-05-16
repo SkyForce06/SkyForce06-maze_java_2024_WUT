@@ -49,7 +49,6 @@ public class MainFrame extends JFrame {
         // Dodaj funkcje do przycisków używając klasy FunctionButton
         loadTextButton.addActionListener(new LoadButtonTXT(mazeFrame));
         saveButton.addActionListener(new SaveButton(mazeFrame));
-
         findPathButton.addActionListener(e -> mazeFrame.solveMaze());
     }
 

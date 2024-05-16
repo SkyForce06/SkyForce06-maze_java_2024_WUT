@@ -5,7 +5,10 @@ import mazeLogic.MazeParser;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import javax.imageio.ImageIO;
 
 public class MazeFrame extends JPanel {
     private MazeParser parser;
@@ -21,6 +24,23 @@ public class MazeFrame extends JPanel {
         setBackground(Color.WHITE);
         cellSize = 6; // Określ rozmiar komórki
         this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        // addMouseListener(new MouseAdapter() {
+
+        // public void mouseClicked(MouseEvent e) {
+        // // Calculate which cell was clicked
+        // if (maze != null) {
+        // int col = e.getX() / cellSize;
+        // int row = e.getY() / cellSize;
+
+        // // Ensure the click is within the bounds of the maze
+        // if (row >= 0 && row < maze.length && col >= 0 && col < maze[0].length) {
+        // char cell = maze[row][col];
+        // // Perform an action based on the cell that was clicked
+        // handleCellClick(row, col, cell);
+        // }
+        // }
+        // }
+        // });
     }
 
     public void loadMaze(MazeParser parser) {
@@ -29,6 +49,11 @@ public class MazeFrame extends JPanel {
         setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
         revalidate(); // Konieczne odświeżenie rozmiaru
         repaint();
+    }
+
+    private void handleCellClick(int row, int col, char cell) {
+        // Example action: display a message with the cell's coordinates and value
+        JOptionPane.showMessageDialog(this, "Clicked cell at (" + row + ", " + col + ") with value: " + cell);
     }
 
     private Image createCachedImage() {
@@ -94,11 +119,18 @@ public class MazeFrame extends JPanel {
         }
     }
 
+    // Zwraca listę kroków rozwiązania labiryntu
     public List<Point> getSolveSteps() {
         return solveSteps;
     }
 
+    // Zwraca parser labiryntu
     public MazeParser getParser() {
         return parser;
+    }
+
+    // Zwraca rozmiar komórki labiryntu
+    public int getCellSize() {
+        return cellSize;
     }
 }
