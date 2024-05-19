@@ -9,6 +9,7 @@ import java.util.List;
 
 public class MazeParser {
     private char[][] maze; // 2D array to store the maze layout
+
     public void setMaze(char[][] maze) {
         this.maze = maze;
     }
@@ -62,6 +63,26 @@ public class MazeParser {
                 }
             }
         }
+    }
+
+    public void resetStart(Point newStart) {
+        resetPoint(getStart(), newStart, MazeConstants.Start);
+        startX = newStart.x;
+        startY = newStart.y;
+
+    }
+
+    public void resetEnd(Point newEnd) {
+        resetPoint(getEnd(), newEnd, MazeConstants.End);
+        endX = newEnd.x;
+        endY = newEnd.y;
+    }
+
+    private void resetPoint(Point oldPos, Point newPos, char symbol) {
+
+        maze[(int) oldPos.getX()][(int) oldPos.getY()] = MazeConstants.Path;
+        maze[(int) newPos.getX()][(int) newPos.getY()] = symbol;
+
     }
 
     // Getter method to retrieve the maze layout
