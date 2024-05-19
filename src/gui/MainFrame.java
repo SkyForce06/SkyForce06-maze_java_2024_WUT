@@ -1,5 +1,10 @@
+package gui;
+
 import javax.swing.*;
 
+import gui.buttons.ButtonTexts;
+import gui.buttons.SetEndBtn;
+import gui.buttons.SetStartBtn;
 import mazeLogic.MazeService;
 
 import java.awt.*;
@@ -33,18 +38,23 @@ public class MainFrame extends JFrame {
 
         // Panel narzędzi
         JPanel toolPanel = new JPanel(new FlowLayout());
-        loadTextButton = new JButton("Load Text");
-        loadBinaryButton = new JButton("Load Binary");
-        saveButton = new JButton("Save");
-        findPathButton = new JButton("Find Path");
-        selectStartButton = new JButton("Select Start");
-        selectEndButton = new JButton("Select End");
-        toolPanel.add(loadTextButton);
-        toolPanel.add(loadBinaryButton);
-        toolPanel.add(saveButton);
-        toolPanel.add(findPathButton);
-        toolPanel.add(selectStartButton);
-        toolPanel.add(selectEndButton);
+        loadTextButton = new JButton(ButtonTexts.LoadT);
+        saveButton = new JButton(ButtonTexts.Export);
+        findPathButton = new JButton(ButtonTexts.FindPath);
+        selectStartButton = new SetStartBtn(mazeFrame, ButtonTexts.SelectStart);
+        selectEndButton = new SetEndBtn(mazeFrame, ButtonTexts.SelectEnd);
+        JButton[] buttons = {
+                loadTextButton,
+                saveButton,
+                findPathButton,
+                selectStartButton,
+                selectEndButton
+        };
+        for (JButton jButton : buttons) {
+            toolPanel.add(jButton);
+            mazeFrame.buttons.add(jButton);
+        }
+
         mainPanel.add(toolPanel, BorderLayout.NORTH);
 
         // Dodaj główny panel do ramki

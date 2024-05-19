@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.util.List;
 
 public class MazeService implements IMazeService {
+    MazeParser parser;
 
     @Override
     public List<Point> getSolvePoints(MazeParser parser) {
@@ -12,4 +13,5 @@ public class MazeService implements IMazeService {
         return dijkstra.solve();
     }
 
+ 
 }
