@@ -2,9 +2,7 @@ package gui;
 
 import javax.swing.*;
 
-import gui.buttons.ButtonTexts;
-import gui.buttons.SetEndBtn;
-import gui.buttons.SetStartBtn;
+import gui.buttons.*;
 import mazeLogic.MazeService;
 
 import java.awt.*;
@@ -60,25 +58,11 @@ public class MainFrame extends JFrame {
         // Dodaj główny panel do ramki
         add(mainPanel);
 
-        // Dodaj funkcje do przycisków używając klasy FunctionButton
-        FunctionButton.loadTextButton(loadTextButton, mazeFrame, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int returnValue = fileChooser.showOpenDialog(null);
-                if (returnValue == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = fileChooser.getSelectedFile();
+        // Dodaj funkcje do przycisków
+        loadTextButton.addActionListener(new LoadButtonTXT(mazeFrame));
+        saveButton.addActionListener(new SaveButton(mazeFrame));
+        findPathButton.addActionListener(e -> mazeFrame.solveMaze());
 
-                    mazeFrame.loadMazeFromFile(selectedFile);
-                }
-            }
-        });
-        FunctionButton.loadTextButton(findPathButton, mazeFrame, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mazeFrame.solveMaze();
-            }
-        });
     }
 
     public static void main(String[] args) {
