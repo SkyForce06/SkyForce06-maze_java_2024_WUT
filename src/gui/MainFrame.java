@@ -17,7 +17,6 @@ public class MainFrame extends JFrame {
     private MazeFrame mazeFrame;
 
     private JButton loadTextButton;
-    private JButton loadBinaryButton;
     private JButton saveButton;
     private JButton findPathButton;
     private JButton selectStartButton;
