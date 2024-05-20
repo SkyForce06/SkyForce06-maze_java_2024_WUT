@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MazeFrame extends JPanel {
     private MazeParser parser;
@@ -24,10 +25,10 @@ public class MazeFrame extends JPanel {
     private int offsetX = 0;
     private int offsetY = 0;
     private Image cachedImage;
-
     private Point clickedPoint;
     private Point newStartPoint;
     private Point newEndPoint;
+    private List<Point> solveSteps;
 
     public ArrayList<JButton> buttons;
 
@@ -99,33 +100,38 @@ public class MazeFrame extends JPanel {
         repaint();
     }
 
-    public void loadMazeFromFile(File file) {
-        try {
-            parser = new MazeParser(file.getAbsolutePath());
-            cachedImage = createCachedImage();
-            setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
-            revalidate(); // Konieczne odświeżenie rozmiaru
-            repaint();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void loadMaze(MazeParser parser) {
+        this.parser = parser;
+        cachedImage = createCachedImage();
+        setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
+        revalidate(); // Konieczne odświeżenie rozmiaru
+        repaint();
     }
+
+//    public void loadMazeFromFile(File file) {
+//        try {
+//            parser = new MazeParser(file.getAbsolutePath());
+//            cachedImage = createCachedImage();
+//            setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
+//            revalidate(); // Konieczne odświeżenie rozmiaru
+//            repaint();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void solveMaze() {
         if (parser != null) {
-            var solvePoints = mazeService.getSolvePoints(parser);
-            // var maze = parser.getMaze();
-            for (Point solvePoint : solvePoints) {
-                if (!solvePoint.equals(parser.getStart()) && !solvePoint.equals(parser.getEnd()))
-                    repaintOnePixel(solvePoint, MazeConstants.Solution);
-                // maze[(int) solvePoint.getX()][(int) solvePoint.getY()] =
-                // MazeConstants.Solution;
+            solveSteps = mazeService.getSolvePoints(parser); // Store the solve steps
+            var maze = parser.getMaze();
+            for (Point solvePoint : solveSteps) {
+                maze[(int) solvePoint.getX()][(int) solvePoint.getY()] = MazeConstants.Solution;
             }
-
-            // cachedImage = createCachedImage();
-            // repaint();
+            cachedImage = createCachedImage();
+            repaint();
         }
     }
+
 
     private Image createCachedImage() {
         Image image = new BufferedImage(parser.getCols() * cellSize, parser.getRows() * cellSize,
@@ -169,5 +175,20 @@ public class MazeFrame extends JPanel {
         offsetX = aRect.x;
         offsetY = aRect.y;
         repaint();
+    }
+
+    // Zwraca listę kroków rozwiązania labiryntu
+    public List<Point> getSolveSteps() {
+        return solveSteps;
+    }
+
+    // Zwraca parser labiryntu
+    public MazeParser getParser() {
+        return parser;
+    }
+
+    // Zwraca rozmiar komórki labiryntu
+    public int getCellSize() {
+        return cellSize;
     }
 }
