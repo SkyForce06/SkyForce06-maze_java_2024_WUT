@@ -22,7 +22,7 @@ public class LoadButtonTXT implements ActionListener {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
             try {
-                MazeParser parser = new MazeParser(selectedFile.getAbsolutePath());
+                MazeParser parser = new MazeParser(selectedFile);
                 mazeFrame.loadMaze(parser);
             } catch (Exception ex) {
                 ex.printStackTrace();

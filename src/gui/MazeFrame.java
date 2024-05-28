@@ -24,12 +24,14 @@ public class MazeFrame extends JPanel {
     private IMazeService mazeService;
     private int offsetX = 0;
     private int offsetY = 0;
-    private Image cachedImage;
+    private Boolean blockClick = false;
+    private BufferedImage cachedImage;
+
     private Point clickedPoint;
     private Point newStartPoint;
+
     private Point newEndPoint;
     private List<Point> solveSteps;
-
     public ArrayList<JButton> buttons;
 
     public void setNewStartPoint() {
@@ -60,12 +62,11 @@ public class MazeFrame extends JPanel {
         this.buttons = new ArrayList<>();
         this.mazeService = mazeService;
         setBackground(Color.WHITE);
-        cellSize = 6; // Określ rozmiar komórki
-        this.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        cellSize = 10; // Określ rozmiar komórki
         addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {
-                if (parser != null) {
+                if (parser != null && !blockClick) {
 
                     int col = e.getX() / cellSize;
                     int row = e.getY() / cellSize;
@@ -75,11 +76,11 @@ public class MazeFrame extends JPanel {
                         if ((int) clickedPoint.getX() == row && (int) clickedPoint.getY() == col)
                             return;
                         repaintOnePixel(clickedPoint, maze[(int) clickedPoint.getX()][(int) clickedPoint.getY()]);
-                        setButtonEnabled(ButtonTexts.SelectStart, true);
-                        setButtonEnabled(ButtonTexts.SelectEnd, true);
 
                     }
                     clickedPoint = new Point(row, col);
+                    setButtonEnabled(ButtonTexts.SelectStart, true);
+                    setButtonEnabled(ButtonTexts.SelectEnd, true);
                     repaintOnePixel(clickedPoint, MazeConstants.TemporaryPoint);
 
                 }
@@ -106,35 +107,26 @@ public class MazeFrame extends JPanel {
         setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
         revalidate(); // Konieczne odświeżenie rozmiaru
         repaint();
+        setButtonEnabled(ButtonTexts.FindPath, true);
     }
-
-//    public void loadMazeFromFile(File file) {
-//        try {
-//            parser = new MazeParser(file.getAbsolutePath());
-//            cachedImage = createCachedImage();
-//            setPreferredSize(new Dimension(parser.getCols() * cellSize, parser.getRows() * cellSize));
-//            revalidate(); // Konieczne odświeżenie rozmiaru
-//            repaint();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public void solveMaze() {
         if (parser != null) {
             solveSteps = mazeService.getSolvePoints(parser); // Store the solve steps
-            var maze = parser.getMaze();
+
             for (Point solvePoint : solveSteps) {
-                maze[(int) solvePoint.getX()][(int) solvePoint.getY()] = MazeConstants.Solution;
+                if (!solvePoint.equals(parser.getStart()) && !solvePoint.equals(parser.getEnd()))
+                    repaintOnePixel(solvePoint, MazeConstants.Solution);
+
             }
-            cachedImage = createCachedImage();
-            repaint();
+            setButtonEnabled(ButtonTexts.Export, true);
+            setButtonEnabled(ButtonTexts.FindPath, false);
+            blockClick = true;
         }
     }
 
-
-    private Image createCachedImage() {
-        Image image = new BufferedImage(parser.getCols() * cellSize, parser.getRows() * cellSize,
+    private BufferedImage createCachedImage() {
+        BufferedImage image = new BufferedImage(parser.getCols() * cellSize, parser.getRows() * cellSize,
                 BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
         if (parser != null) {
@@ -190,5 +182,9 @@ public class MazeFrame extends JPanel {
     // Zwraca rozmiar komórki labiryntu
     public int getCellSize() {
         return cellSize;
+    }
+
+    public BufferedImage getCachedImage() {
+        return cachedImage;
     }
 }

@@ -2,7 +2,7 @@ package mazeLogic;
 
 import java.awt.Color;
 
-public class MazeConstants {
+public  class MazeConstants {
     public static final char Wall = 'X';
     public static final char Path = ' ';
     public static final char Start = 'P';

@@ -2,8 +2,12 @@ package mazeLogic;
 
 import java.awt.Point;
 import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,19 +38,90 @@ public class MazeParser {
     }
 
     // Constructor to initialize the parser with the filename of the maze
-    public MazeParser(String filename) throws IOException {
-        List<char[]> lines = new ArrayList<>(); // List to hold each line of the maze
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
-            // Read each line from the file and add it to the list
-            while ((line = reader.readLine()) != null) {
-                lines.add(line.toCharArray());
+    public MazeParser(File file) throws IOException {
+
+        var fileParts = file.getName().split("\\.");
+        if (fileParts.length > 1) {
+            switch (fileParts[1]) {
+                case "txt":
+                    List<char[]> lines = new ArrayList<>(); // List to hold each line of the maze
+                    try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        String line;
+                        // Read each line from the file and add it to the list
+                        while ((line = reader.readLine()) != null) {
+                            lines.add(line.toCharArray());
+                        }
+                    }
+                    maze = lines.toArray(new char[0][]); // Convert the list to a 2D array
+                    findStartAndEnd(); // Locate the start and end points in the maze
+                    rows = maze.length;
+                    cols = maze[0].length;
+                    break;
+                case "bin":
+                    try (FileInputStream fis = new FileInputStream(file)) {
+
+                        // Read the length of the string first
+                        // var bytes = dis.readNBytes(5);
+                        // var buffer = ByteBuffer.wrap(bytes);
+                        var buffer=fis.readNBytes(4);
+                        int id = ByteBuffer.wrap(buffer).getInt(); 
+                        // dis.readByte();
+
+                        // this.cols = dis.readUnsignedShort();
+                        // this.rows = dis.readUnsignedShort();
+                        // this.startX = dis.readUnsignedShort();
+                        // this.startY = dis.readUnsignedShort();
+                        // this.endX = dis.readUnsignedShort();
+                        // this.endY = dis.readUnsignedShort();
+                        // int tst = dis.readInt();
+                        // dis.readNBytes(20);
+                        maze = new char[rows][cols];
+                        for (int i = 0; i < rows; i++) {
+                            for (int j = 0; j < cols; j++) {
+                                maze[i][j] = MazeConstants.Wall;
+                            }
+                        }
+                        // maze[startX][startY] = MazeConstants.Start;
+                        // maze[endX][endY] = MazeConstants.End;
+
+                        // char separator = dis.readChar();
+                        // char wall = dis.readChar();
+                        // char path = dis.readChar();
+
+                        // int readLines = 0;
+                        // while (readLines != rows - 1) {
+                        //     int readColumns = 0;
+                        //     int x = 0;
+                        //     while (readColumns != rows) // czytamy wiersz i sprawdzamy ile już przeczytaliśmy w tym
+                        //                                 // wierszu
+                        //     {
+                        //         char keySep = dis.readChar();
+                        //         char value = dis.readChar();
+                        //         char count = dis.readChar();
+
+                        //         int size = count + 1;
+                        //         for (int i = 0; i < size; i++) {
+                        //             if (path == value) {
+                        //                 maze[readLines][cols] = MazeConstants.Path;
+                        //             }
+                        //             x++;
+                        //         }
+                        //         readColumns += size; // odświeżamy liczbę przeczytanych kolumn
+
+                        //     }
+                        //     readLines++; // odświeżamy igrek
+
+                        // }
+
+                    }
+                    break;
+                default:
+                    throw new IOException("Not supported extension. Available extensions: .txt, .bin");
             }
+
+        } else {
+            throw new IOException("Error of reading file");
         }
-        maze = lines.toArray(new char[0][]); // Convert the list to a 2D array
-        findStartAndEnd(); // Locate the start and end points in the maze
-        rows = maze.length;
-        cols = maze[0].length;
     }
 
     // Method to find and store the coordinates of the start ('S') and end ('E')

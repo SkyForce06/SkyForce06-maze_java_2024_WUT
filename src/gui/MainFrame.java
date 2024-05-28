@@ -40,6 +40,11 @@ public class MainFrame extends JFrame {
         findPathButton = new JButton(ButtonTexts.FindPath);
         selectStartButton = new SetStartBtn(mazeFrame, ButtonTexts.SelectStart);
         selectEndButton = new SetEndBtn(mazeFrame, ButtonTexts.SelectEnd);
+        selectEndButton.setEnabled(false);
+        selectStartButton.setEnabled(false);
+        saveButton.setEnabled(false);
+        findPathButton.setEnabled(false);
+
         JButton[] buttons = {
                 loadTextButton,
                 saveButton,
@@ -59,7 +64,7 @@ public class MainFrame extends JFrame {
 
         // Dodaj funkcje do przycisków
         loadTextButton.addActionListener(new LoadButtonTXT(mazeFrame));
-        saveButton.addActionListener(new SaveButton(mazeFrame));
+        saveButton.addActionListener(new SaveButton(mazeFrame, new MazeService()));
         findPathButton.addActionListener(e -> mazeFrame.solveMaze());
 
     }
