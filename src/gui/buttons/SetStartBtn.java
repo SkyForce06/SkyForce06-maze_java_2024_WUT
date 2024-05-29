@@ -7,20 +7,21 @@ import javax.swing.JButton;
 import gui.MazeFrame;
 
 public class SetStartBtn extends JButton {
-    private MazeFrame frame;
+    private MazeFrame frame; // Referencja do głównej ramki labiryntu
 
+    // Konstruktor klasy SetStartBtn, przyjmujący MazeFrame i tekst przycisku jako argumenty
     public SetStartBtn(MazeFrame frame, String text) {
-        super(text);
-        this.frame = frame;
+        super(text); // Ustawienie tekstu przycisku
+        this.frame = frame; // Przechowanie referencji do MazeFrame
     }
 
+    // Nadpisana metoda fireActionPerformed, która jest wywoływana podczas kliknięcia przycisku
     @Override
     protected void fireActionPerformed(ActionEvent event) {
-        // Call the custom click method
+        // Wywołanie niestandardowej metody ustawiania nowego punktu startowego w MazeFrame
         frame.setNewStartPoint();
 
-        // Call super to ensure standard behavior like notifying listeners
+        // Wywołanie metody nadrzędnej, aby zapewnić standardowe zachowanie, takie jak powiadamianie nasłuchiwaczy
         super.fireActionPerformed(event);
     }
-
 }
