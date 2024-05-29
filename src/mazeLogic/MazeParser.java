@@ -12,14 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MazeParser {
-    private char[][] maze; // 2D array to store the maze layout
+    private char[][] maze; // 2D tablica przechowująca układ labiryntu
 
     public void setMaze(char[][] maze) {
         this.maze = maze;
     }
 
-    private int startX, startY, endX, endY; // Coordinates of the start and end points
-    int cols, rows;
+    private int startX, startY, endX, endY; // Współrzędne punktów startowego i końcowego
+    int cols, rows; // Liczba kolumn i wierszy w labiryncie
 
     public int getCols() {
         return cols;
@@ -37,23 +37,22 @@ public class MazeParser {
         this.rows = rows;
     }
 
-    // Constructor to initialize the parser with the filename of the maze
+    // Konstruktor inicjalizujący parser z nazwą pliku labiryntu
     public MazeParser(File file) throws IOException {
-
         var fileParts = file.getName().split("\\.");
         if (fileParts.length > 1) {
             switch (fileParts[1]) {
                 case "txt":
-                    List<char[]> lines = new ArrayList<>(); // List to hold each line of the maze
+                    List<char[]> lines = new ArrayList<>(); // Lista do przechowywania każdej linii labiryntu
                     try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                         String line;
-                        // Read each line from the file and add it to the list
+                        // Odczytuj każdą linię z pliku i dodaj ją do listy
                         while ((line = reader.readLine()) != null) {
                             lines.add(line.toCharArray());
                         }
                     }
-                    maze = lines.toArray(new char[0][]); // Convert the list to a 2D array
-                    findStartAndEnd(); // Locate the start and end points in the maze
+                    maze = lines.toArray(new char[0][]); // Konwertuj listę na 2D tablicę
+                    findStartAndEnd(); // Znajdź punkty startowy i końcowy w labiryncie
                     rows = maze.length;
                     cols = maze[0].length;
                     break;
@@ -64,7 +63,7 @@ public class MazeParser {
                         // var bytes = dis.readNBytes(5);
                         // var buffer = ByteBuffer.wrap(bytes);
                         var buffer=fis.readNBytes(4);
-                        int id = ByteBuffer.wrap(buffer).getInt(); 
+                        int id = ByteBuffer.wrap(buffer).getInt();
                         // dis.readByte();
 
                         // this.cols = dis.readUnsignedShort();
@@ -124,8 +123,7 @@ public class MazeParser {
         }
     }
 
-    // Method to find and store the coordinates of the start ('S') and end ('E')
-    // points
+    // Metoda do znajdowania i przechowywania współrzędnych punktów startowego ('S') i końcowego ('E')
     private void findStartAndEnd() {
         for (int i = 0; i < maze.length; i++) {
             for (int j = 0; j < maze[i].length; j++) {
@@ -140,37 +138,37 @@ public class MazeParser {
         }
     }
 
+    // Metoda do resetowania punktu startowego
     public void resetStart(Point newStart) {
         resetPoint(getStart(), newStart, MazeConstants.Start);
         startX = newStart.x;
         startY = newStart.y;
-
     }
 
+    // Metoda do resetowania punktu końcowego
     public void resetEnd(Point newEnd) {
         resetPoint(getEnd(), newEnd, MazeConstants.End);
         endX = newEnd.x;
         endY = newEnd.y;
     }
 
+    // Metoda pomocnicza do resetowania punktu
     private void resetPoint(Point oldPos, Point newPos, char symbol) {
-
         maze[(int) oldPos.getX()][(int) oldPos.getY()] = MazeConstants.Path;
         maze[(int) newPos.getX()][(int) newPos.getY()] = symbol;
-
     }
 
-    // Getter method to retrieve the maze layout
+    // Metoda zwracająca układ labiryntu
     public char[][] getMaze() {
         return maze;
     }
 
-    // Getter method to retrieve the start coordinates
+    // Metoda zwracająca współrzędne punktu startowego
     public Point getStart() {
         return new Point(startX, startY);
     }
 
-    // Getter method to retrieve the end coordinates
+    // Metoda zwracająca współrzędne punktu końcowego
     public Point getEnd() {
         return new Point(endX, endY);
     }

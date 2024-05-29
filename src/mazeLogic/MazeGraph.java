@@ -7,29 +7,29 @@ import java.util.List;
 import java.util.Map;
 
 public class MazeGraph {
-    
-    private final char[][] maze; // 2D array to store the maze layout
-    private final int rows, cols; // Number of rows and columns in the maze
-    private final Map<Point, List<Point>> graph = new HashMap<>(); // Graph representation using adjacency list
 
-    // Constructor to initialize the graph with the maze layout
+    private final char[][] maze; // 2D tablica przechowująca układ labiryntu
+    private final int rows, cols; // Liczba wierszy i kolumn w labiryncie
+    private final Map<Point, List<Point>> graph = new HashMap<>(); // Reprezentacja grafu za pomocą listy sąsiedztwa
+
+    // Konstruktor inicjalizujący graf na podstawie układu labiryntu
     public MazeGraph(char[][] maze) {
         this.maze = maze;
         this.rows = maze.length;
         this.cols = maze[0].length;
-        buildGraph(); // Build the graph from the maze layout
+        buildGraph(); // Zbuduj graf na podstawie układu labiryntu
     }
 
-    // Method to build the graph from the maze
+    // Metoda budująca graf na podstawie labiryntu
     private void buildGraph() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                if (maze[i][j] != MazeConstants.Wall) { // Only consider non-wall cells
+                if (maze[i][j] != MazeConstants.Wall) { // Uwzględniaj tylko komórki nie będące ścianami
                     Point current = new Point(i, j);
-                    graph.putIfAbsent(current, new ArrayList<>()); // Initialize adjacency list
+                    graph.putIfAbsent(current, new ArrayList<>()); // Inicjalizuj listę sąsiedztwa
                     for (Point neighbor : getNeighbors(i, j)) {
                         if (maze[neighbor.x][neighbor.y] != MazeConstants.Wall) {
-                            graph.get(current).add(neighbor); // Add neighbors if not walls
+                            graph.get(current).add(neighbor); // Dodaj sąsiadów, jeśli nie są ścianami
                         }
                     }
                 }
@@ -37,21 +37,21 @@ public class MazeGraph {
         }
     }
 
-    // Method to get the valid neighbors (up, down, left, right) of a cell
+    // Metoda do pobierania sąsiadów (góra, dół, lewo, prawo) danej komórki
     private List<Point> getNeighbors(int x, int y) {
         List<Point> neighbors = new ArrayList<>();
         if (x > 0)
-            neighbors.add(new Point(x - 1, y)); // Up
+            neighbors.add(new Point(x - 1, y)); // Góra
         if (x < rows - 1)
-            neighbors.add(new Point(x + 1, y)); // Down
+            neighbors.add(new Point(x + 1, y)); // Dół
         if (y > 0)
-            neighbors.add(new Point(x, y - 1)); // Left
+            neighbors.add(new Point(x, y - 1)); // Lewo
         if (y < cols - 1)
-            neighbors.add(new Point(x, y + 1)); // Right
+            neighbors.add(new Point(x, y + 1)); // Prawo
         return neighbors;
     }
 
-    // Getter method to retrieve the graph
+    // Metoda zwracająca graf
     public Map<Point, List<Point>> getGraph() {
         return graph;
     }

@@ -16,22 +16,24 @@ import javax.swing.JOptionPane;
 
 public class MazeService implements IMazeService {
 
+    // Metoda do uzyskania punktów rozwiązania labiryntu
     @Override
     public List<Point> getSolvePoints(MazeParser parser) {
-        MazeGraph graph = new MazeGraph(parser.getMaze());
-        Dijkstra dijkstra = new Dijkstra(graph.getGraph(), parser.getStart(), parser.getEnd());
-        return dijkstra.solve();
+        MazeGraph graph = new MazeGraph(parser.getMaze()); // Tworzenie grafu z labiryntu
+        Dijkstra dijkstra = new Dijkstra(graph.getGraph(), parser.getStart(), parser.getEnd()); // Inicjalizacja algorytmu Dijkstry
+        return dijkstra.solve(); // Rozwiązanie labiryntu
     }
 
+    // Metoda do odczytu danych binarnych (pusta)
     public void readBinary() {
-
+        // Implementacja do odczytu danych binarnych
     }
 
+    // Metoda do zapisywania labiryntu do pliku
     public void saveMaze(File file, List<Point> solvePoints, BufferedImage image) {
-
-        switch (getFileExtension(file)) {
+        switch (getFileExtension(file)) { // Sprawdzanie rozszerzenia pliku
             case "txt":
-                saveSolveStepsToFile(file, solvePoints);
+                saveSolveStepsToFile(file, solvePoints); // Zapisanie kroków rozwiązania do pliku tekstowego
                 break;
             case "bin":
                 break;
@@ -41,7 +43,7 @@ public class MazeService implements IMazeService {
                     pngFileName += ".png";
                 }
                 File pngFile = new File(pngFileName);
-                saveMazeAsPNG(pngFile, image);
+                saveMazeAsPNG(pngFile, image); // Zapisanie labiryntu jako PNG
                 break;
             default:
                 JOptionPane.showMessageDialog(null, "Wrong extension type. Available types: .bin, .txt, .png");
@@ -49,13 +51,14 @@ public class MazeService implements IMazeService {
         }
     }
 
+    // Metoda do zapisu danych binarnych (pusta)
     private void saveAsBinary(File file, List<Point> solvePoints) {
-
+        // Implementacja do zapisu danych binarnych
     }
 
+    // Metoda do zapisywania kroków rozwiązania do pliku tekstowego
     private void saveSolveStepsToFile(File file, List<Point> solvePoints) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-
             if (solvePoints != null) {
                 Point current = null;
                 String currentAction = null;
@@ -92,7 +95,7 @@ public class MazeService implements IMazeService {
         }
     }
 
-    // Metoda opisująca akcję podjętą przez użytkownika w labiryncie.
+    // Metoda opisująca akcję podjętą przez użytkownika w labiryncie
     private String describeAction(int index, Point current, List<Point> steps) {
         if (index == 0) {
             return "Starting from point";
@@ -110,20 +113,20 @@ public class MazeService implements IMazeService {
         }
     }
 
-    // Metoda opisująca kierunek ruchu w labiryncie.
+    // Metoda opisująca kierunek ruchu w labiryncie
     private String describeDirection(int steps, String positive, String negative) {
         String direction = steps > 0 ? positive : negative;
         steps = Math.abs(steps);
         return steps == 1 ? direction : steps + " steps " + direction;
     }
 
-    // Metoda opisująca sekwencję ruchów w labiryncie.
+    // Metoda opisująca sekwencję ruchów w labiryncie
     private String describeSequence(int count, String action) {
         return count + " " + action;
     }
 
+    // Metoda do zapisywania labiryntu jako PNG
     private void saveMazeAsPNG(File file, BufferedImage image) {
-
         try {
             ImageIO.write(image, "png", file);
             JOptionPane.showMessageDialog(null, "Maze saved as PNG successfully!");
@@ -133,19 +136,19 @@ public class MazeService implements IMazeService {
         }
     }
 
+    // Metoda do uzyskania rozszerzenia pliku
     private String getFileExtension(File file) {
         if (file == null) {
-            return ""; // No file provided
+            return ""; // Brak pliku
         }
 
         String fileName = file.getName();
         int lastIndexOfDot = fileName.lastIndexOf('.');
 
         if (lastIndexOfDot == -1 || lastIndexOfDot == 0) {
-            return ""; // No extension found or dot is at the beginning of the file name
+            return ""; // Brak rozszerzenia lub kropka na początku nazwy pliku
         }
 
         return fileName.substring(lastIndexOfDot + 1);
     }
-
 }

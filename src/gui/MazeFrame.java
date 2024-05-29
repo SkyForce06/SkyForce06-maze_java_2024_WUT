@@ -5,7 +5,6 @@ import mazeLogic.MazeConstants;
 import mazeLogic.MazeParser;
 
 import javax.swing.*;
-
 import gui.buttons.ButtonTexts;
 
 import java.awt.*;
@@ -19,21 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MazeFrame extends JPanel {
-    private MazeParser parser;
-    private int cellSize;
-    private IMazeService mazeService;
-    private int offsetX = 0;
-    private int offsetY = 0;
-    private Boolean blockClick = false;
-    private BufferedImage cachedImage;
+    private MazeParser parser; // Parser do wczytywania labiryntu
+    private int cellSize; // Rozmiar pojedynczej komórki labiryntu
+    private IMazeService mazeService; // Serwis do obsługi labiryntu
+    private int offsetX = 0; // Przesunięcie w osi X
+    private int offsetY = 0; // Przesunięcie w osi Y
+    private Boolean blockClick = false; // Flaga blokująca kliknięcia
+    private BufferedImage cachedImage; // Buforowany obraz labiryntu
 
-    private Point clickedPoint;
-    private Point newStartPoint;
+    private Point clickedPoint; // Punkt kliknięcia
+    private Point newStartPoint; // Nowy punkt startowy
+    private Point newEndPoint; // Nowy punkt końcowy
+    private List<Point> solveSteps; // Lista kroków rozwiązania labiryntu
+    public ArrayList<JButton> buttons; // Lista przycisków interfejsu
 
-    private Point newEndPoint;
-    private List<Point> solveSteps;
-    public ArrayList<JButton> buttons;
-
+    // Metoda ustawiająca nowy punkt startowy
     public void setNewStartPoint() {
         if (clickedPoint != null) {
             newStartPoint = clickedPoint;
@@ -42,10 +41,10 @@ public class MazeFrame extends JPanel {
             repaintOnePixel(parser.getStart(), MazeConstants.Start);
             setButtonEnabled(ButtonTexts.SelectStart, false);
             setButtonEnabled(ButtonTexts.SelectEnd, false);
-
         }
     }
 
+    // Metoda ustawiająca nowy punkt końcowy
     public void setNewEndPoint() {
         if (clickedPoint != null) {
             newEndPoint = clickedPoint;
@@ -54,20 +53,19 @@ public class MazeFrame extends JPanel {
             repaintOnePixel(parser.getEnd(), MazeConstants.End);
             setButtonEnabled(ButtonTexts.SelectEnd, false);
             setButtonEnabled(ButtonTexts.SelectStart, false);
-
         }
     }
 
+    // Konstruktor klasy MazeFrame
     public MazeFrame(IMazeService mazeService) {
         this.buttons = new ArrayList<>();
         this.mazeService = mazeService;
         setBackground(Color.WHITE);
-        cellSize = 6; // Określ rozmiar komórki
+        cellSize = 10; // Określ rozmiar komórki
         addMouseListener(new MouseAdapter() {
-
+            // Obsługa kliknięcia myszą
             public void mouseClicked(MouseEvent e) {
                 if (parser != null && !blockClick) {
-
                     int col = e.getX() / cellSize;
                     int row = e.getY() / cellSize;
                     var maze = parser.getMaze();
@@ -76,18 +74,17 @@ public class MazeFrame extends JPanel {
                         if ((int) clickedPoint.getX() == row && (int) clickedPoint.getY() == col)
                             return;
                         repaintOnePixel(clickedPoint, maze[(int) clickedPoint.getX()][(int) clickedPoint.getY()]);
-
                     }
                     clickedPoint = new Point(row, col);
                     setButtonEnabled(ButtonTexts.SelectStart, true);
                     setButtonEnabled(ButtonTexts.SelectEnd, true);
                     repaintOnePixel(clickedPoint, MazeConstants.TemporaryPoint);
-
                 }
             }
         });
     }
 
+    // Metoda do odświeżania jednego piksela
     public void repaintOnePixel(Point p, char symbol) {
         int row = (int) p.getX();
         int col = (int) p.getY();
@@ -101,6 +98,7 @@ public class MazeFrame extends JPanel {
         repaint();
     }
 
+    // Metoda do ładowania labiryntu
     public void loadMaze(MazeParser parser) {
         this.parser = parser;
         cachedImage = createCachedImage();
@@ -110,14 +108,14 @@ public class MazeFrame extends JPanel {
         setButtonEnabled(ButtonTexts.FindPath, true);
     }
 
+    // Metoda do rozwiązywania labiryntu
     public void solveMaze() {
         if (parser != null) {
-            solveSteps = mazeService.getSolvePoints(parser); // Store the solve steps
+            solveSteps = mazeService.getSolvePoints(parser); // Zapisanie kroków rozwiązania
 
             for (Point solvePoint : solveSteps) {
                 if (!solvePoint.equals(parser.getStart()) && !solvePoint.equals(parser.getEnd()))
                     repaintOnePixel(solvePoint, MazeConstants.Solution);
-
             }
             setButtonEnabled(ButtonTexts.Export, true);
             setButtonEnabled(ButtonTexts.FindPath, false);
@@ -125,6 +123,7 @@ public class MazeFrame extends JPanel {
         }
     }
 
+    // Metoda do tworzenia buforowanego obrazu labiryntu
     private BufferedImage createCachedImage() {
         BufferedImage image = new BufferedImage(parser.getCols() * cellSize, parser.getRows() * cellSize,
                 BufferedImage.TYPE_INT_RGB);
@@ -145,6 +144,7 @@ public class MazeFrame extends JPanel {
         return image;
     }
 
+    // Metoda do włączania i wyłączania przycisków
     private void setButtonEnabled(String text, boolean isEnabled) {
         for (int i = 0; i < buttons.size(); i++) {
             if (buttons.get(i).getText().equals(text)) {
@@ -153,6 +153,7 @@ public class MazeFrame extends JPanel {
         }
     }
 
+    // Metoda do rysowania komponentu
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -161,6 +162,7 @@ public class MazeFrame extends JPanel {
         }
     }
 
+    // Metoda do przewijania widocznego obszaru
     @Override
     public void scrollRectToVisible(Rectangle aRect) {
         super.scrollRectToVisible(aRect);
@@ -184,6 +186,7 @@ public class MazeFrame extends JPanel {
         return cellSize;
     }
 
+    // Zwraca buforowany obraz labiryntu
     public BufferedImage getCachedImage() {
         return cachedImage;
     }
