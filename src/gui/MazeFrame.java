@@ -62,7 +62,7 @@ public class MazeFrame extends JPanel {
         this.buttons = new ArrayList<>();
         this.mazeService = mazeService;
         setBackground(Color.WHITE);
-        cellSize = 10; // Określ rozmiar komórki
+        cellSize = 6; // Określ rozmiar komórki
         addMouseListener(new MouseAdapter() {
 
             public void mouseClicked(MouseEvent e) {

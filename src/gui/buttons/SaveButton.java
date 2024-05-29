@@ -41,7 +41,13 @@ public class SaveButton implements ActionListener {
         fileChooser.addChoosableFileFilter(pngFilter);
         fileChooser.addChoosableFileFilter(binFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
-        mazeService.saveMaze(fileChooser.getSelectedFile(), mazeFrame.getSolveSteps(), mazeFrame.getCachedImage());
+        int returnValue = fileChooser.showSaveDialog(null);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+
+            File selectedFile = fileChooser.getSelectedFile();
+            BufferedImage image=mazeFrame.getCachedImage();
+            mazeService.saveMaze(selectedFile, mazeFrame.getSolveSteps(), image);
+        }
 
     }
 

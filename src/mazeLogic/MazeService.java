@@ -125,7 +125,6 @@ public class MazeService implements IMazeService {
     private void saveMazeAsPNG(File file, BufferedImage image) {
 
         try {
-
             ImageIO.write(image, "png", file);
             JOptionPane.showMessageDialog(null, "Maze saved as PNG successfully!");
         } catch (IOException e) {
