@@ -35,12 +35,13 @@ public class SaveButton implements ActionListener {
         FileNameExtensionFilter pngFilter = new FileNameExtensionFilter("Photo (.png)", "png");
         FileNameExtensionFilter binFilter = new FileNameExtensionFilter("Binary file (.bin)", "bin");
 
-        JFileChooser fileChooser = new JFileChooser();
+        JFileChooser fileChooser = new JFileChooser(".");
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         fileChooser.addChoosableFileFilter(txtFilter);
         fileChooser.addChoosableFileFilter(pngFilter);
         fileChooser.addChoosableFileFilter(binFilter);
         fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.showSaveDialog(null);
         mazeService.saveMaze(fileChooser.getSelectedFile(), mazeFrame.getSolveSteps(), mazeFrame.getCachedImage());
 
     }
