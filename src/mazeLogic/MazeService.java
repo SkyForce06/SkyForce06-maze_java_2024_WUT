@@ -26,11 +26,6 @@ public class MazeService implements IMazeService {
         return dijkstra.solve(); // Rozwiązanie labiryntu
     }
 
-    // Metoda do odczytu danych binarnych (pusta)
-    public void readBinary() {
-        // Implementacja do odczytu danych binarnych
-    }
-
     // Metoda do zapisywania labiryntu do pliku
     public void saveMaze(File file, List<Point> solvePoints, BufferedImage image) {
         switch (getFileExtension(file)) { // Sprawdzanie rozszerzenia pliku
@@ -57,7 +52,7 @@ public class MazeService implements IMazeService {
         }
     }
 
-    // Metoda do zapisu danych binarnych (pusta)
+    // Metoda do zapisu danych binarnych
     private void saveAsBinary(File file, List<Point> solvePoints) {
         try {
             FileOutputStream fos = new FileOutputStream(file);
